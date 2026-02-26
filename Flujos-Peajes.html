@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Flujos Sistema de Peajes</title>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f3f4f6;
+        margin: 0;
+        padding: 40px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #111827;
+        margin-bottom: 10px;
+    }
+
+    h2 {
+        margin-top: 60px;
+        color: #1f2937;
+    }
+
+    p {
+        color: #374151;
+        max-width: 900px;
+        line-height: 1.6;
+    }
+
+    .diagram-container {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        margin-top: 20px;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>Arquitectura de Flujos - Sistema de Peajes</h1>
+
+<p>
+Este documento describe el comportamiento del sistema en dos escenarios principales:
+el procesamiento normal de un paso vehicular y el flujo de ajuste cuando se detecta una inconsistencia.
+</p>
+
+<!-- ===================== FLUJO GENERAL ===================== -->
+
+<h2>Flujo General del Paso</h2>
+
+<div class="diagram-container">
+<div class="mermaid">
+flowchart TD
+
+A([Inicio]) --> B[Concesion detecta paso del vehiculo]
+B --> C[Envia informacion del paso al endpoint API]
+C --> D[Sistema recibe payload del paso]
+D --> E[Valida estructura y datos obligatorios]
+
+E -->|No valido| F[Marca negacion o rechazo]
+F --> G[Genera registro de intento]
+G --> Z([Fin])
+
+E -->|Valido| H[Genera transaccion del paso]
+H --> I[Calcula tarifa segun categoria]
+I --> J[Registra debito en la cuenta]
+J --> K[Identifica pasos pendientes si aplica]
+K --> L[Genera token de confirmacion]
+L --> M[Responde a concesion]
+M --> Z
+
+</div>
+</div>
+
+<!-- ===================== FLUJO AJUSTE ===================== -->
+
+<h2>Flujo de Ajuste de Paso</h2>
+
+<div class="diagram-container">
+<div class="mermaid">
+flowchart TD
+
+A2([Inicio]) --> B2[Concesion detecta inconsistencia]
+B2 --> C2[Envia solicitud de ajuste via API]
+C2 --> D2[Incluye ID motivo y nueva categoria]
+D2 --> E2[Sistema recibe solicitud]
+E2 --> F2[Valida existencia del paso original]
+
+F2 -->|No| G2[Rechaza ajuste]
+G2 --> H2[Responde error]
+H2 --> Z2([Fin])
+
+F2 -->|Si| I2[Job confirmation user adjustment list]
+I2 --> J2[Valida reglas de ajuste]
+
+J2 -->|No| K2[Rechaza ajuste]
+K2 --> L2[Notifica concesion]
+L2 --> Z2
+
+J2 -->|Si| M2[Genera nueva transaccion]
+M2 --> N2[Calcula diferencia tarifaria]
+N2 --> O2[Aplica debito o abono]
+O2 --> P2[Registra historico]
+P2 --> Q2[Responde confirmacion]
+Q2 --> Z2
+
+</div>
+</div>
+
+<script>
+mermaid.initialize({
+    startOnLoad: true,
+    securityLevel: "loose"
+});
+</script>
+
+</body>
+</html>

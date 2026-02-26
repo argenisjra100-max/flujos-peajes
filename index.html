@@ -1,121 +1,238 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Flujos Sistema de Peajes</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Arquitectura de Flujos - Sistema de Peajes</title>
 
+<!-- ===============================
+     LIBRERÍA MERMAID PARA DIAGRAMAS
+================================ -->
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f3f4f6;
-        margin: 0;
-        padding: 40px;
-    }
 
-    h1 {
-        text-align: center;
-        color: #111827;
-        margin-bottom: 10px;
-    }
+/* ===============================
+   CONFIGURACIÓN GLOBAL
+================================ */
+:root {
+    --primary: #0f172a;
+    --secondary: #1e293b;
+    --accent: #2563eb;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --background: #f1f5f9;
+    --card-bg: #ffffff;
+}
 
-    h2 {
-        margin-top: 60px;
-        color: #1f2937;
-    }
+body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    background-color: var(--background);
+    color: #334155;
+}
 
-    p {
-        color: #374151;
-        max-width: 900px;
-        line-height: 1.6;
-    }
+/* ===============================
+   HEADER PRINCIPAL
+================================ */
+header {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+}
 
-    .diagram-container {
-        background: white;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-        margin-top: 20px;
-    }
+header h1 {
+    margin: 0;
+    font-size: 28px;
+    letter-spacing: 1px;
+}
+
+header p {
+    margin-top: 10px;
+    font-size: 15px;
+    opacity: 0.9;
+}
+
+/* ===============================
+   CONTENEDOR PRINCIPAL
+================================ */
+.container {
+    max-width: 1100px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+
+/* ===============================
+   TARJETAS DE SECCIÓN
+================================ */
+.section-card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 40px;
+    margin-bottom: 60px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease;
+    
+    
+}
+
+.section-card:hover {
+    transform: translateY(-3px);
+}
+
+.section-card h2 {
+    margin-top: 0;
+    color: var(--primary);
+}
+
+.section-card p {
+    max-width: 850px;
+    line-height: 1.7;
+}
+
+/* ===============================
+   CONTENEDOR DIAGRAMA
+================================ */
+.diagram-wrapper {
+    margin-top: 30px;
+    padding: 30px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    overflow-x: auto;
+    /* display: flex;
+    justify-content: center; */
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    font-size: 13px;
+    color: #64748b;
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>Arquitectura de Flujos - Sistema de Peajes</h1>
+<!-- ===============================
+     ENCABEZADO DEL DOCUMENTO
+================================ -->
+<header>
+    <h1>Sistema de Peajes - Arquitectura de Flujos</h1>
+    <p>Documento técnico que describe el flujo operativo del procesamiento de pasos y ajustes.</p>
+</header>
 
-<p>
-Este documento describe el comportamiento del sistema en dos escenarios principales:
-el procesamiento normal de un paso vehicular y el flujo de ajuste cuando se detecta una inconsistencia.
-</p>
+<div class="container">
 
-<!-- ===================== FLUJO GENERAL ===================== -->
+    <!-- ===============================
+         SECCIÓN 1 - FLUJO GENERAL
+    ================================= -->
+    <div class="section-card">
 
-<h2>Flujo General del Paso</h2>
+        <h2>1. Flujo General del Paso Vehicular</h2>
 
-<div class="diagram-container">
-<div class="mermaid">
+        <p>
+        Este flujo describe el proceso estándar cuando un vehículo realiza un paso por una concesión.
+        Incluye validación, generación de transacción, cálculo tarifario y respuesta a la concesión.
+        </p>
+
+        <div class="diagram-wrapper">
+        <div class="mermaid">
 flowchart TD
 
-A([Inicio]) --> B[Concesion detecta paso del vehiculo]
-B --> C[Envia informacion del paso al endpoint API]
-C --> D[Sistema recibe payload del paso]
-D --> E[Valida estructura y datos obligatorios]
+Start([Inicio]) --> Detect[Concesion detecta paso del vehiculo]
+Detect --> Send[Envia informacion del paso al API]
+Send --> Receive[Sistema recibe payload]
+Receive --> Validate[Valida estructura y datos obligatorios]
 
-E -->|No valido| F[Marca negacion o rechazo]
-F --> G[Genera registro de intento]
-G --> Z([Fin])
+Validate -->|Invalido| Reject[Marca rechazo]
+Reject --> Log[Genera registro de intento]
+Log --> End([Fin])
 
-E -->|Valido| H[Genera transaccion del paso]
-H --> I[Calcula tarifa segun categoria]
-I --> J[Registra debito en la cuenta]
-J --> K[Identifica pasos pendientes si aplica]
-K --> L[Genera token de confirmacion]
-L --> M[Responde a concesion]
-M --> Z
+Validate -->|Valido| CreateTx[Genera transaccion]
+CreateTx --> Calculate[Calcula tarifa]
+Calculate --> Debit[Registra debito]
+Debit --> Pending[Identifica pasos pendientes]
+Pending --> Token[Genera token confirmacion]
+Token --> Response[Responde a concesion]
+Response --> End
 
-</div>
-</div>
+        </div>
+        </div>
 
-<!-- ===================== FLUJO AJUSTE ===================== -->
+    </div>
 
-<h2>Flujo de Ajuste de Paso</h2>
 
-<div class="diagram-container">
-<div class="mermaid">
+    <!-- ===============================
+         SECCIÓN 2 - FLUJO DE AJUSTE
+    ================================= -->
+    <div class="section-card">
+
+        <h2>2. Flujo de Ajuste de Paso</h2>
+
+        <p>
+        Este flujo aplica cuando una concesión reporta una inconsistencia en un paso previamente registrado.
+        El sistema valida reglas de negocio antes de generar una nueva transacción compensatoria.
+        </p>
+
+        <div class="diagram-wrapper">
+        <div class="mermaid">
 flowchart TD
 
-A2([Inicio]) --> B2[Concesion detecta inconsistencia]
-B2 --> C2[Envia solicitud de ajuste via API]
-C2 --> D2[Incluye ID motivo y nueva categoria]
-D2 --> E2[Sistema recibe solicitud]
-E2 --> F2[Valida existencia del paso original]
+Start2([Inicio]) --> DetectIssue[Concesion detecta inconsistencia]
+DetectIssue --> RequestAdjust[Envia solicitud ajuste API]
+RequestAdjust --> IncludeData[Incluye ID motivo y nueva categoria]
+IncludeData --> Receive2[Sistema recibe solicitud]
+Receive2 --> ValidateOriginal[Valida existencia del paso original]
 
-F2 -->|No| G2[Rechaza ajuste]
-G2 --> H2[Responde error]
-H2 --> Z2([Fin])
+ValidateOriginal -->|No existe| Reject2[Rechaza ajuste]
+Reject2 --> NotifyError[Responde error]
+NotifyError --> End2([Fin])
 
-F2 -->|Si| I2[Job confirmation user adjustment list]
-I2 --> J2[Valida reglas de ajuste]
+ValidateOriginal -->|Existe| LoadJob[Carga job validacion ajuste]
+LoadJob --> ValidateRules[Valida reglas de negocio]
 
-J2 -->|No| K2[Rechaza ajuste]
-K2 --> L2[Notifica concesion]
-L2 --> Z2
+ValidateRules -->|No permitido| Reject3[Rechaza ajuste]
+Reject3 --> NotifyConcession[Notifica concesion]
+NotifyConcession --> End2
 
-J2 -->|Si| M2[Genera nueva transaccion]
-M2 --> N2[Calcula diferencia tarifaria]
-N2 --> O2[Aplica debito o abono]
-O2 --> P2[Registra historico]
-P2 --> Q2[Responde confirmacion]
-Q2 --> Z2
+ValidateRules -->|Permitido| CreateNewTx[Genera nueva transaccion]
+CreateNewTx --> CalcDiff[Calcula diferencia tarifaria]
+CalcDiff --> ApplyAdjust[Aplica debito o abono]
+ApplyAdjust --> History[Registra historico]
+History --> Confirm[Responde confirmacion]
+Confirm --> End2
+
+        </div>
+        </div>
+
+    </div>
 
 </div>
-</div>
 
+<!-- ===============================
+     FOOTER
+================================ -->
+<footer>
+    <i>Argenis Jose Rangel</i> - Arquitectura de Flujos Sistema de Peajes
+</footer>
+
+<!-- ===============================
+     INICIALIZACIÓN MERMAID
+================================ -->
 <script>
+/*
+  Configuración de Mermaid:
+  - startOnLoad: renderiza automáticamente
+  - theme: estilo visual uniforme
+  - securityLevel: "loose" permite HTML básico
+*/
 mermaid.initialize({
     startOnLoad: true,
+    theme: "default",
     securityLevel: "loose"
 });
 </script>

@@ -64,6 +64,30 @@ header p {
 }
 
 /* ===============================
+   ESTILOS DE LOS NODOS
+================================ */
+ 
+    .mermaid .node rect {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    /* Hover */
+    .mermaid .node:hover rect {
+      fill: #85e789 !important;
+      stroke: #57995b !important;
+      stroke-width: 3px;
+   
+ 
+    }
+
+    .mermaid .node:hover text {
+      fill: white !important;
+      font-weight: bold;
+        
+    }
+
+/* ===============================
    TARJETAS DE SECCIÓN
 ================================ */
 .section-card {

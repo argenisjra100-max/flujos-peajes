@@ -30,11 +30,20 @@
     --card-bg: #ffffff;
 }
 
+
+
 body {
     margin: 0;
     font-family: "Segoe UI", Roboto, sans-serif;
     background-color: var(--background);
     color: #334155;
+/* No se puede seleccionar texto
+No aparece el cursor tipo “estoy escribiendo”
+El diagrama queda limpio y profesional */
+    user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 /* ===============================
@@ -57,6 +66,10 @@ header p {
     margin-top: 10px;
     font-size: 15px;
     opacity: 0.9;
+}
+
+header .logo-banner{
+    margin-bottom: 15px;
 }
 
 /* ===============================
@@ -82,6 +95,7 @@ header p {
       fill: #85e789 !important;
       stroke: #57995b !important;
       stroke-width: 3px;
+     
    
  
     }
@@ -152,8 +166,9 @@ footer {
      ENCABEZADO DEL DOCUMENTO
 ================================ -->
 <header>
+    <img src="LOGO GOPASS.png" class="logo-banner" width="200">
     <h1>Sistema de Peajes - Arquitectura de Flujos</h1>
-    <p>Documento técnico que describe el flujo operativo del procesamiento de pasos y ajustes.</p>
+    <p>Documento técnico que describe el flujo operativo del procesamiento de pasos y ajustes. </p>
 </header>
 
 <div class="container">

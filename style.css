@@ -156,6 +156,28 @@ header .logo-banner{
 }
 
 /* ===============================
+   BOTÓN DIAGRAMA SECUENCIA
+================================ */
+
+.btn-acceso {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 20px;
+    background-color: #0f172a;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.btn-acceso:hover {
+    background-color: #1e293b;
+    transform: translateY(-2px);
+}
+
+/* ===============================
    CONTENEDOR DIAGRAMA
 ================================ */
 .diagram-wrapper {
@@ -172,6 +194,11 @@ header .logo-banner{
     animation: fadeSlideIn 0.8s ease forwards;
     
 }
+/* =======================================
+ BOTÓN ENLACE DIAGRAMA SECUENCIA
+================================ */
+
+
 
 /* =======================================
  Animación de entrada suave del diagrama

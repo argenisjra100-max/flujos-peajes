@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagrama de Secuencia - Sistema de Peajes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Mermaid CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+    <style>
+        body {
+            font-family: "Segoe UI", Roboto, sans-serif;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .diagram-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="diagram-container">
+    <h1>Diagrama de Secuencia - Flujo Operativo</h1>
+
+    <div class="mermaid">
+sequenceDiagram
+    participant Usuario
+    participant INT as Intermediador IP/REV
+    participant OP as Operador IP/REV
+    participant SiGT as Subsistema de Gestión de Transacciones
+
+    %% Registro y activación
+    Usuario->>INT: Registra usuario + vehículo + TAG
+    INT-->>SiGT: POST /siGT/dispositivos-activos (nuevo TAG)
+
+    %% Recarga y paso
+    Usuario->>INT: Recarga cuenta / define pago
+    Usuario->>INT: Pasa por carril de peaje
+
+    %% Validación del paso
+    OP->>SiGT: GET /siGT/dispositivos-activos (verifica TAG)
+    OP->>OP: Detecta paso (lectura TAG, placa, categoría)
+    OP->>INT: POST /peaje/paso (ID TAG, placa, tarifa)
+    INT->>INT: Almacena paso y ajusta cuenta usuario
+
+    %% Compensación y conciliación
+    INT->>OP: POST /intermediador/transferencia-operador (monto + detalle pasos)
+    OP->>OP: Recibe transferencia y concilia registros
+    OP->>SiGT: POST /siGT/dispositivo-invalido (si TAG inválido o error)
+    </div>
+</div>
+
+<script>
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: "default",
+        securityLevel: "loose"
+    });
+</script>
+
+</body>
+</html>

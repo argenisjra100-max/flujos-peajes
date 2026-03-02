@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link rel="icon" type="image/png" sizes="32x32" href="./img/G.png">
+<link rel="stylesheet" href="style.css">
+
+<title>Arquitectura IP/REV - Sistema de Peajes</title>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    mermaid.initialize({ startOnLoad: true });
+</script>
+
+<style>
+html { scroll-behavior: smooth; }
+
+.btn-diagrama {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 18px;
+    background-color: #1e3a8a;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+.btn-diagrama:hover {
+    background-color: #162c6b;
+    transform: translateY(-2px);
+}
+
+.section-card {
+    background: #fff;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.diagram-wrapper {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <img src="./img/LOGO GOPASS.png" width="200">
+    <h1>Arquitectura Operativa IP/REV</h1>
+    <p>Modelo funcional de interoperabilidad entre Operador e Intermediador</p>
+</header>
+
+<div class="container">
+
+<!-- ================================================= -->
+<!-- 1. DEFINICIONES -->
+<!-- ================================================= -->
+
+<div class="section-card">
+<h2>1. Actores del Sistema</h2>
+
+<p><strong>Operador (OP IP/REV):</strong> Administra la infraestructura física del peaje electrónico, carriles, sensores, lectura de TAG y registro de transacciones.</p>
+
+<p><strong>Intermediador (INT IP/REV):</strong> Administra usuarios, entrega TAG, gestiona cuentas prepago/pospago y transfiere valores al Operador.</p>
+
+<p><strong>Usuario:</strong> Vehículo vinculado contractualmente al Intermediador.</p>
+
+<p><strong>SiGT / COLPASS:</strong> Subsistema nacional que valida interoperabilidad y centraliza información normativa.</p>
+</div>
+
+<!-- ================================================= -->
+<!-- 2. ESTRUCTURA DEL PASO POR PEAJE -->
+<!-- ================================================= -->
+
+<div class="section-card">
+<h2>2. Estructura Funcional de un Paso por Peaje</h2>
+
+<h3>Fase 1 – Habilitación</h3>
+<ul>
+<li>Usuario firma contrato con Intermediador.</li>
+<li>Activación y registro del TAG.</li>
+<li>Vinculación de cuenta prepago o pospago.</li>
+<li>Reporte del dispositivo activo al SiGT.</li>
+</ul>
+
+<h3>Fase 2 – Paso Vehicular</h3>
+<ul>
+<li>Operador detecta TAG, placa y categoría.</li>
+<li>Consulta listas activas del Intermediador.</li>
+<li>Registra transacción (fecha, hora, tarifa).</li>
+<li>Reporta paso al Intermediador.</li>
+<li>Intermediador valida cuenta y ajusta saldo.</li>
+</ul>
+
+<h3>Fase 3 – Transferencia Financiera</h3>
+<ul>
+<li>Intermediador consolida pasos.</li>
+<li>Gestiona cobro al usuario.</li>
+<li>Transfiere valor al Operador (menos comisión).</li>
+<li>Operador concilia registros.</li>
+</ul>
+
+<h3>Fase 4 – Supervisión</h3>
+<ul>
+<li>Reporte de inconsistencias.</li>
+<li>Envío de pruebas de transacción.</li>
+<li>Registro ante SiGT.</li>
+<li>Cumplimiento normativo MinTransporte.</li>
+</ul>
+
+
+
+</div>
+
+<!-- ================================================= -->
+<!-- 3. DIAGRAMA DE SECUENCIA -->
+<!-- ================================================= -->
+
+<div id="diagrama-secuencia" class="section-card">
+<h2>3. Diagrama de Secuencia Operativo IP/REV</h2>
+
+<div class="diagram-wrapper">
+<div class="mermaid">
+sequenceDiagram
+
+    participant U as Usuario
+    participant INT as Intermediador IP/REV
+    participant OP as Operador IP/REV
+    participant SiGT as Subsistema SiGT
+
+    %% Habilitación
+    U->>INT: Firma contrato + registra vehículo
+    INT->>SiGT: POST /siGT/dispositivos-activos
+    U->>INT: Recarga saldo / define pago
+
+    %% Paso por peaje
+    U->>OP: Pasa por carril electrónico
+    OP->>SiGT: GET /siGT/dispositivos-activos
+    OP->>OP: Detecta TAG + placa + categoría
+    OP->>INT: POST /peaje/paso (TAG, tarifa, fecha)
+    INT->>INT: Valida cuenta y ajusta saldo
+
+    %% Transferencia
+    INT->>OP: POST /intermediador/transferencia-operador
+    OP->>OP: Concilia contra registros
+
+    %% Supervisión
+    OP->>SiGT: POST /siGT/dispositivo-invalido (si aplica)
+    INT->>SiGT: Reporte consolidado transacciones
+
+</div>
+</div>
+</div>
+
+</div>
+
+<footer>
+<i>Argenis Jose Rangel</i> - Arquitectura IP/REV Sistema de Peajes
+</footer>
+
+</body>
+</html>

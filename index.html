@@ -105,7 +105,7 @@ NotifyConcession --> End2
 
 ValidateRules -->|Permitido| CreateNewTx[Genera nueva transaccion]
 CreateNewTx --> CalcDiff[Calcula diferencia tarifaria]
-CalcDiff --> ApplyAdjust[Aplica debito o abono]
+CalcDiff --> ApplyAdjust[Aplica ajuste o abono]
 ApplyAdjust --> History[Registra historico]
 History --> Confirm[Responde confirmacion]
 Confirm --> End2

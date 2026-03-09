@@ -142,32 +142,16 @@ html {
     <!-- ================================================= -->
     <div id="diagrama-secuencia" class="section-card">
 
-        <h2>3. Diagrama de Secuencia Operativo IP/REV</h2>
+    <h2>3. Diagrama de Secuencia Operativo IP/REV</h2>
+
+   
+
+          <!-- <a href="Dsecuencia.html" class="btn-acceso">
+        Ver diagrama se secuencia 
+    </a> -->
 
         <div class="diagram-wrapper">
-            <div class="mermaid">
-sequenceDiagram
-    participant U as Usuario
-    participant INT as Intermediador IP/REV
-    participant OP as Operador IP/REV
-    participant SiGT as Subsistema SiGT
-
-    U->>INT: Firma contrato + registra vehículo
-    INT->>SiGT: POST /siGT/dispositivos-activos
-    U->>INT: Recarga saldo / define pago
-
-    U->>OP: Pasa por carril electrónico
-    OP->>SiGT: GET /siGT/dispositivos-activos
-    OP->>OP: Detecta TAG + placa + categoría
-    OP->>INT: POST /peaje/paso
-    INT->>INT: Valida cuenta y ajusta saldo
-
-    INT->>OP: Transferencia consolidada
-    OP->>OP: Conciliación interna
-
-    OP->>SiGT: Reporte inconsistencias
-    INT->>SiGT: Reporte consolidado
-            </div>
+       <img  src="img/DSecuenciasFlujoPejaes.png" width="100%" alt="">
         </div>
 
     </div>
